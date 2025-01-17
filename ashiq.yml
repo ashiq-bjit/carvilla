@@ -1,0 +1,55 @@
+environment {
+    DOCKER_IMAGE = 'badhan/carvilla' // Base image name
+    DOCKER_TAG = '0.0.1' // Tag for the image
+    CONTAINER_NAME = 'carvilla'
+    DOCKER_CREDENTIALS_ID = 'dockerhub'
+}
+
+triggers {
+    // Poll SCM every 1 minute
+    pollSCM('* * * * *')
+}
+
+stages {
+    stage('Checkout') {
+        steps {
+            // Clone the repository containing the static website's source code
+            git branch: 'main', url: '<https://github.com/badhan-saha-bjit/carvilla>'
+        }
+    }
+
+    stage('Build Docker Image') {
+        steps {
+            script {
+                // Build the Docker image for the static website
+                docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+            }
+        }
+    }
+
+    stage('Push Docker Image') {
+        steps {
+            script {
+                docker.withRegistry("", "${DOCKER_CREDENTIALS_ID}") {
+                    def image = docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    image.push()
+                }
+            }
+        }
+    }
+
+
+    stage('Run Container') {
+        steps {
+            script {
+                sh 'docker rm -f ${CONTAINER_NAME} || true'
+                sh 'docker run -d --name ${CONTAINER_NAME} -p 80:80 ${DOCKER_IMAGE}:${DOCKER_TAG}' // Use tag in run command
+            }
+        }
+    }
+}
+post {
+    always {
+        cleanWs()
+    }
+}
