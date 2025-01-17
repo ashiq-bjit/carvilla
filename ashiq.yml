@@ -1,5 +1,5 @@
 environment {
-    DOCKER_IMAGE = 'ashiq/carvilla' // Base image name
+    DOCKER_IMAGE = 'arcashiq/carvilla' // Base image name
     DOCKER_TAG = '0.0.1' // Tag for the image
     CONTAINER_NAME = 'carvilla'
     DOCKER_CREDENTIALS_ID = 'dockerhub'
