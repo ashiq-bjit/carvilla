@@ -14,7 +14,7 @@ stages {
     stage('Checkout') {
         steps {
             // Clone the repository containing the static website's source code
-            git branch: 'main', url: '<https://github.com/badhan-saha-bjit/carvilla>'
+            git branch: 'main', url: 'https://github.com/ashiq-bjit/carvilla'
         }
     }
 
